@@ -29,7 +29,7 @@
     <div class="panel">
         <div class=panelheader>ChatDown <span style="font:8pt 'Segoe UI'">(edit it!)</span>
             <button onclick="download()" style="font:8pt 'Segoe UI'; margin-left:20px;">save local</button></div>
-        <textarea id=marktext style="height:100%;width:100%" onkeyup=render()>
+        <textarea id=marktext style="height:100%;width:100%">
 user=me
 bot=cafebot
 
@@ -101,6 +101,10 @@ function getURL(){
         render();
     });        
 }
+marktext.addEventListener('keyup',function(e){
+    if (e.keyCode==13)
+        render();
+});
 fileInput.addEventListener('change', function(e) {
     var file = e.target.files[0];
 		if (!file) {
