@@ -1,0 +1,15 @@
+user=Luis
+bot=bank bot
+
+user: Hello
+bot: Hello
+user: I want to cancel my card now
+bot: I can help you. Do you want to cancel the card that ends in 3001?
+user: yes
+bot: May I know why you are cancelling it?
+user: I lost it.
+bot: That's very unfortunate, can you confirm you want to cancel it?
+user: Yes, please cancel it.
+bot: Your card ending in 3001 is cancelled.
+bot: Do you want me to request a new one?
+user: No thanks.
