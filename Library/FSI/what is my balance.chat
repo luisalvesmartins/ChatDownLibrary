@@ -1,0 +1,15 @@
+user=Luis
+bot=bank bot
+
+user: How much money do I have?
+bot: Hello
+
+What account do you want to inquire?
+1. ending with 356
+2. ending with 466
+3. all
+user: 466
+
+bot: your total balance is $1
+
+How may I help you?
