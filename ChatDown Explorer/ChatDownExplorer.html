@@ -13,8 +13,10 @@
         <div>ChatDown Explorer</div>
         <div style="font:12pt 'Segoe UI';padding-top:5px;padding-bottom:5px;">
             ChatDown URL:
-            <input type=text id=chatURL name=chatURL style="width:80%">
+            <input type=text id=chatURL name=chatURL style="width:60%">
             <button onclick="getURL()">Download</button>
+            <button onclick="document.getElementById('fileInput').click();">Local File</button>
+            <input type='file' id="fileInput" style="display:none">
         </div>
         <div style="font:8pt 'Segoe UI'">
             Other examples:
@@ -78,11 +80,30 @@ function getURL(){
         render();
     });        
 }
+fileInput.addEventListener('change', function(e) {
+    var file = e.target.files[0];
+		if (!file) {
+			return;
+		}
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			var contents = e.target.result;
+            document.all("marktext").value=contents;
+            render();
+		}
+		reader.readAsText(file)
+});
+
 document.all("chatURL").value="https://raw.githubusercontent.com/Microsoft/botbuilder-tools/master/packages/Chatdown/Examples/BookTable-happyPath.chat";
 
+function render()
+{
+    renderContent(document.all("marktext").value);
+}
+
 var fileList=[];
-function render(){
-    var original=document.all("marktext").value;
+function renderContent(content){
+    var original=content;
     var pos=original.indexOf("Attachment=");
     var xhrObj = new XMLHttpRequest();
     while (pos>0) {
@@ -96,7 +117,7 @@ function render(){
         pos=original.indexOf("Attachment=",pos+1);
     }
 
-    var chatDown=readContents(document.all("marktext").value)
+    var chatDown=readContents(content)
     document.all("result").innerText= JSON.stringify(chatDown, undefined,2 );
     var sOutput="";
     for(let activity of chatDown){
