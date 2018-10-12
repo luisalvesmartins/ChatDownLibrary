@@ -27,7 +27,8 @@
     </div>
     <div id="main">
     <div class="panel">
-        <div class=panelheader>ChatDown <span style="font:8pt 'Segoe UI'">(edit it!)</span></div>
+        <div class=panelheader>ChatDown <span style="font:8pt 'Segoe UI'">(edit it!)</span>
+            <button onclick="download()" style="font:8pt 'Segoe UI'; margin-left:20px;">save local</button></div>
         <textarea id=marktext style="height:100%;width:100%" onkeyup=render()>
 user=me
 bot=cafebot
@@ -70,6 +71,26 @@ Your table is booked. Reference number: #K89HG38SZ
 </body>
 </html>
 <script>
+function download() {
+    var text=document.all("marktext").value;
+    var filename="file.chat"
+
+    var file = new Blob([text], {type: "text"});
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    else { // Others
+        var a = document.createElement("a"),
+                url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);  
+        }, 0); 
+    }
+}
 function Show(url){
     document.all("chatURL").value=url;
     getURL();

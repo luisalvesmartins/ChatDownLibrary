@@ -48,4 +48,5 @@ html, body {
     border:1px solid;
     overflow-y:auto;
 }
-A { text-decoration: underline;}
+A { text-decoration: underline;cursor: pointer;}
+button { cursor:pointer}
