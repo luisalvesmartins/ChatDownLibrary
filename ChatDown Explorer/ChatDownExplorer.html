@@ -5,8 +5,8 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/adaptivecards/dist/adaptivecards.js" type="text/javascript" ></script>
     <script src="https://unpkg.com/markdown-it/dist/markdown-it.js" type="text/javascript"></script>
-    <script src="chatdownsource.js" type="text/javascript" ></script>
-    <link href="style.css" rel="stylesheet">
+    <script src="./chatdownsource.js" type="text/javascript" ></script>
+    <link href="./style.css" rel="stylesheet">
 </head>
 <body>
     <div id="header">
@@ -28,7 +28,9 @@
     <div id="main">
     <div class="panel">
         <div class=panelheader>ChatDown <span style="font:8pt 'Segoe UI'">(edit it!)</span>
-            <button onclick="download()" style="font:8pt 'Segoe UI'; margin-left:20px;">save local</button></div>
+            <button onclick="render()" style="font:8pt 'Segoe UI'; margin-left:20px;">Refresh</button>
+            <button onclick="download()" style="font:8pt 'Segoe UI'; margin-left:20px;">Save File</button>
+           </div>
         <textarea id=marktext style="height:100%;width:100%">
 user=me
 bot=cafebot
