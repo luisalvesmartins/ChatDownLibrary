@@ -49,6 +49,14 @@ user: yes
 bot: [Typing][Delay=3000]
 Your table is booked. Reference number: #K89HG38SZ
         </textarea>
+        <div style="margin-top:5px">
+            <select id=fromChat>
+                <option>user</option>
+                <option>bot</option>
+            </select>
+            <input type=text id=textChat style="width:80%;">
+            <button onclick="send()"">Add</button>
+        </div>
     </div>
     <div class="panel" style="width:300px;display:none">
         <div class=panelheader>Transcript</div>
@@ -71,6 +79,18 @@ Your table is booked. Reference number: #K89HG38SZ
 </body>
 </html>
 <script>
+//THE TEXT INPUT
+textChat.addEventListener('keyup',function(e){
+    if (e.keyCode==13)
+        send();
+});
+function send(){
+    document.all("marktext").value+="\n" + document.all("fromChat").value + ":" + document.all("textChat").value;
+    document.all("fromChat").selectedIndex=1-document.all("fromChat").selectedIndex;
+    document.all("textChat").value="";
+    render();
+}
+
 function download() {
     var text=document.all("marktext").value;
     var filename="file.chat"
