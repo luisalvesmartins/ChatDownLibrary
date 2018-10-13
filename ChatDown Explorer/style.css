@@ -39,9 +39,15 @@ html, body {
     padding-left:10px;padding-right:10px;
 }
 .panelheader{
-    font:20px 'Segoe UI Light';
-    padding-bottom:10px;
-}
+    font:24px 'Segoe UI Light';
+    display: flex;                  /* establish flex container */
+    flex-direction: row;            /* default value; can be omitted */
+    flex-wrap: nowrap;              /* default value; can be omitted */
+    justify-content: space-between; /* switched from default (flex-start, see below) */
+  }
+  .panelheader > div {
+    align-self: flex-end;
+  }
 #botWC {
     position: relative;
     background-color: white;
@@ -50,3 +56,7 @@ html, body {
 }
 A { text-decoration: underline;cursor: pointer;}
 button { cursor:pointer}
+.menu {padding-bottom:5px;font:12px 'Segoe UI'}
+.menu a {background-color:#eeeeee;
+    text-decoration: none; padding:5px;}
+.menu a:hover {background-color:#dddddd;}

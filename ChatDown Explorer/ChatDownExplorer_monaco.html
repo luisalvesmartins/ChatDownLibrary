@@ -8,34 +8,29 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/adaptivecards/dist/adaptivecards.js" type="text/javascript" ></script>
     <script src="https://unpkg.com/markdown-it/dist/markdown-it.js" type="text/javascript"></script>
-    <script src="chatdownsource.js" type="text/javascript" ></script>
-    <script src="vs/loader.js"></script>
-    <link href="style.css" rel="stylesheet">
+    <script src="./chatdownsource.js" type="text/javascript" ></script>
+    <script src="./script.js" type="text/javascript" ></script>
+    <script src="./vs/loader.js"></script>
+    <link href="./style.css" rel="stylesheet">
 </head>
 <body>
     <div id="header">
         <div>ChatDown Explorer</div>
-        <div style="font:12pt 'Segoe UI';padding-top:5px;padding-bottom:5px;">
-            ChatDown URL:
-            <input type=text id=chatURL name=chatURL style="width:60%">
-            <button onclick="getURL()">Download</button>
-            <button onclick="document.getElementById('fileInput').click();">Local File</button>
-            <input type='file' id="fileInput" style="display:none">
-        </div>
-        <div style="font:8pt 'Segoe UI'">
-            Other examples:
-            <a onclick="Show('https://raw.githubusercontent.com/luisalvesmartins/ChatDownLibrary/master/Library/Banking/what%20is%20my%20balance.chat')">Account Balance</a>
-            <a onclick="Show('https://raw.githubusercontent.com/luisalvesmartins/ChatDownLibrary/master/Library/Banking/cancel%20my%20card.chat')">Cancel my Card</a>
-            <a onclick="Show('https://raw.githubusercontent.com/luisalvesmartins/ChatDownLibrary/master/Library/Other/book%20a%20table.chat')">Book a table</a>
-        </div>
     </div>
     <div id="main">
         <div class="panel" style="width:48%">
-            <div class=panelheader>ChatDown <span style="font:8pt 'Segoe UI'">(edit it)</span>
-                <button onclick="newChat()" style="font:8pt 'Segoe UI'; margin-left:20px;">New</button>
-                <button onclick="render()" style="font:8pt 'Segoe UI'; margin-left:20px;">Refresh(F5)</button>
-                <button onclick="download()" style="font:8pt 'Segoe UI'; margin-left:5px;">save local</button></div>
-                <div id="marktext" style="width:100%;height:100%;border:1px solid grey"></div>
+            <div class=panelheader>
+                <div>ChatDown</div>
+                <div class=menu> 
+                    <a title="New chat" onclick="MenuChatDown.New()">New</a>
+                    <a title="Load local .chat file" onclick="MenuChatDown.LoadLocal()">Load Local</a>
+                    <a title="Save chat to a local file" onclick="MenuChatDown.SaveLocal()">Save Local</a>
+                    <a title="Download a chat file from the web" onclick="MenuChatDown.Download()">Download</a>
+                    <a title="Refresh the emulator" onclick="render()">Refresh</a>
+                    <input type='file' id="fileInput" style="display:none">
+                </div>
+            </div>
+            <div id="marktext_monaco" style="width:100%;height:100%;border:1px solid grey"></div>
             <div style="margin-top:5px">
                 <select id=fromChat>
                     <option>user</option>
@@ -52,7 +47,12 @@
             </div>
         </div>
         <div class="panel" style="width:48%">
-            <div class=panelheader>Chat</div>
+            <div class=panelheader>
+                <div>Chat Emulator</div>
+                <div class=menu> 
+                    <a onclick="MenuChatEmulator.SaveTranscript()">Save Transcript</a>
+                </div>
+            </div>
             <div class='largeChild' id='botWC'>
                 <div class="wc-app">
                     <div class='wc-message-pane'>
@@ -71,7 +71,7 @@
 require.config({ paths: { 'vs': './vs' }});
 var editor;
 require(['vs/editor/editor.main'], function() {
-    editor = monaco.editor.create(document.getElementById('marktext'), {
+    editor = monaco.editor.create(document.getElementById('marktext_monaco'), {
         value: [
             'user=me',
             'bot=cafebot',
@@ -98,173 +98,6 @@ require(['vs/editor/editor.main'], function() {
         render();
     });
 });
-</script>
-<script>
-//THE TEXT INPUT
-textChat.addEventListener('keyup',function(e){
-    if (e.keyCode==13)
-        send();
-});
-function send(){
-    setChat(getChat() + "\n" + document.all("fromChat").value + ":" + document.all("textChat").value);
-    document.all("fromChat").selectedIndex=1-document.all("fromChat").selectedIndex;
-    document.all("textChat").value="";
-    render();
-}
-
-function newChat(){
-    editor.setValue("user=me\nbot=bot\n");
-    render();
-}
-function setChat(text){
-    editor.setValue(text);
-    //document.all("marktext").value=text;
-}
-function getChat(){
-    //document.all("marktext").value
-    if (editor)
-        return editor.getValue();
-    else
-        return "";
-}
-function download() {
-    var text=getChat();
-    var filename="file.chat"
-
-    var file = new Blob([text], {type: "text"});
-    if (window.navigator.msSaveOrOpenBlob) // IE10+
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    else { // Others
-        var a = document.createElement("a"),
-                url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);  
-        }, 0); 
-    }
-}
-function Show(url){
-    document.all("chatURL").value=url;
-    getURL();
-}
-function getURL(){
-    $.get( document.all("chatURL").value, function( data ) {
-        setChat(data);
-        render();
-    });        
-}
-fileInput.addEventListener('change', function(e) {
-    var file = e.target.files[0];
-		if (!file) {
-			return;
-		}
-		var reader = new FileReader();
-		reader.onload = function(e) {
-			var contents = e.target.result;
-            setChat(contents);
-            render();
-		}
-		reader.readAsText(file)
-});
-
-function render()
-{
-   renderContent(getChat());
-}
-
-var fileList=[];
-function renderContent(content){
-    var original=content;
-    var pos=original.indexOf("Attachment=");
-    var xhrObj = new XMLHttpRequest();
-    while (pos>0) {
-        var pos2=original.substr(pos+11).indexOf(" ");
-        var file=original.substr(pos+11,pos2);
-        // open and send a synchronous request
-        xhrObj.open('GET', file, false);
-        xhrObj.send('');
-
-        fileList.push({ file:file, content:xhrObj.responseText});
-        pos=original.indexOf("Attachment=",pos+1);
-    }
-
-    var chatDown=readContents(content)
-    document.all("result").innerText= JSON.stringify(chatDown, undefined,2 );
-    var sOutput="";
-    for(let activity of chatDown){
-        sOutput+="<div class='wc-message-wrapper list'>";
-        switch (activity.type) {
-        case "ActivityTypes.Message":
-            var sFrom="";
-            if (activity.from.role=="bot")
-                sFrom="bot";
-            else
-                sFrom="me";
-            sOutput+="<div class='wc-message wc-message-from-" + sFrom + "'>";
-
-            sOutput+="<div class='wc-message-content'>"
-            if (activity.attachments)
-            {
-                var card=JSON.parse(activity.attachments[0].content);
-                delete card["$schema"];
-
-                var adaptiveCard = new AdaptiveCards.AdaptiveCard();
-
-                adaptiveCard.hostConfig = new AdaptiveCards.HostConfig({
-                    fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
-                });
-                adaptiveCard.onExecuteAction = function(action) { alert("Ow!"); }
-
-                // For markdown support you need a third-party library
-                // E.g., to use markdown-it, include in your HTML page:
-                //      type="text/javascript" src="https://unpkg.com/markdown-it/dist/markdown-it.js">
-                // And add this code to replace the default markdown handler:
-                adaptiveCard.processMarkdown = function(text) { return markdownit().render(text); }
-
-                // Parse the card payload
-                adaptiveCard.parse(card);
-
-                // Render the card to an HTML element:
-                var renderedCard = adaptiveCard.render();
-                sOutput+=renderedCard.outerHTML;
-            }
-            else
-                sOutput+=markdownit().render(activity.text);
-            sOutput+= "</div>";
-            sOutput+="</div>";
-            sOutput+='<div class="wc-message-from wc-message-from-' + sFrom + '"><span>' + activity.from.name + '</span></div>';
-            
-            break;
-        case "typing":
-            sOutput+="<div class='wc-message-content'>(typing)</div>";
-            break;
-        case "conversationUpdate":
-            for(var f=0;f<activity.membersAdded.length;f++)
-            {
-                sOutput+='<div class="wc-message-from wc-message-from-bot"><span>' + activity.membersAdded[f].name + ' joined the conversation</span></div>';
-            }
-            for(var f=0;f<activity.membersRemoved.length;f++)
-            {
-                sOutput+='<div class="wc-message-from wc-message-from-bot"><span>' + activity.membersRemoved[f].name + ' left the conversation</span></div>';
-            }
-            break;
-        default:
-            sOutput+="<div class='wc-message-content'>" + activity.type + "</div>";
-            break;
-        }
-
-        sOutput+="</div>";
-    }
-    document.all("displayActivities").innerHTML=sOutput;
-    document.all("botWC").scrollTop=60000;
-}
-document.all("chatURL").value="https://raw.githubusercontent.com/Microsoft/botbuilder-tools/master/packages/Chatdown/Examples/BookTable-happyPath.chat";
-//I'm lazy... very lazy... Please laugh when you read this:
-window.setTimeout(render,1000);
 </script>
 </body>
 </html>
