@@ -12,7 +12,7 @@ Drop the files in a folder and run the ChatDownExplorer.html locally. No need fo
 
 An experimental version with the Monaco editor is also available.
 
-![Image](/screenshot.png "Screenshot")
+![Image](/ChatDown%20Explorer/screenshot.png "Screenshot")
 
 ## ChatDown Libraries
 
