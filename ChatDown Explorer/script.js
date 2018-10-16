@@ -56,6 +56,67 @@ var MenuChatEmulator={
             }, 0); 
         }
 
+    },
+    ExportToNode:function(){
+        var dialogName=prompt("Name of the Dialog","SimpleWaterfallDialogBot");
+        $.get( "nodetemplate.js", function( data ) {
+            data=data.replace(/\[DIALOGNAME\]/g,dialogName);
+            var steps="";
+
+            var chatDown=readContents(getChat())
+            for(let activity of chatDown){
+                switch (activity.type) {
+                case "ActivityTypes.Message":
+                    if (activity.from.role=="bot")
+                    {
+
+                        if (activity.attachments)
+                        {
+                            var card=JSON.parse(activity.attachments[0].content);
+
+                            steps+="            async function (step) {\n                ";
+                            steps+="await step.context.sendActivity({attachments: [CardFactory.adaptiveCard(" + JSON.stringify(card) + ")]});";
+                            steps+="\n            },\n";
+                        }
+                        else
+                            steps+="            async function (step) {\n                await step.prompt(NAME_PROMPT, `" + activity.text + "?`);\n            },\n";
+                        //sOutput+=markdownit().render(activity.text);
+                    }
+                    
+                    break;
+                case "typing":
+                    break;
+                case "conversationUpdate":
+                    break;
+                default:
+                    steps+="//UNPROCESSED:" + activity.type + "\n";
+                    break;
+                }
+            }
+        
+            data=data.replace(/\[STEPS\]/g,steps);
+
+            //SAVE LOCAL
+            var text=data;
+            var filename=dialogName + ".js"
+    
+            var file = new Blob([text], {type: "text"});
+            if (window.navigator.msSaveOrOpenBlob) // IE10+
+                window.navigator.msSaveOrOpenBlob(file, filename);
+            else { // Others
+                var a = document.createElement("a"),
+                        url = URL.createObjectURL(file);
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(function() {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);  
+                }, 0); 
+            }
+    
+        });    
     }
 }
 
