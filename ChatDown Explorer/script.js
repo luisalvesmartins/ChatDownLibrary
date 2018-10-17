@@ -250,7 +250,8 @@ function renderContent(content){
     document.all("botWC").scrollTop=60000;
 }
 function refreshLayout() {
-    editor.layout();
+    if (!document.all("marktext"))
+        editor.layout();
 };
 function setChat(text){
     if (document.all("marktext"))
