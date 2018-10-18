@@ -196,28 +196,46 @@ function renderContent(content){
             sOutput+="<div class='wc-message-content'>"
             if (activity.attachments)
             {
-                var card=JSON.parse(activity.attachments[0].content);
-                delete card["$schema"];
+                switch (activity.attachments[0].contentType) {
+                    case "application/vnd.microsoft.card.adaptive":
+                        var card=JSON.parse(activity.attachments[0].content);
+                        delete card["$schema"];
 
-                var adaptiveCard = new AdaptiveCards.AdaptiveCard();
-
-                adaptiveCard.hostConfig = new AdaptiveCards.HostConfig({
-                    fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
-                });
-                adaptiveCard.onExecuteAction = function(action) { alert("Ow!"); }
-
-                // For markdown support you need a third-party library
-                // E.g., to use markdown-it, include in your HTML page:
-                //      type="text/javascript" src="https://unpkg.com/markdown-it/dist/markdown-it.js">
-                // And add this code to replace the default markdown handler:
-                adaptiveCard.processMarkdown = function(text) { return markdownit().render(text); }
-
-                // Parse the card payload
-                adaptiveCard.parse(card);
-
-                // Render the card to an HTML element:
-                var renderedCard = adaptiveCard.render();
-                sOutput+=renderedCard.outerHTML;
+                        var adaptiveCard = new AdaptiveCards.AdaptiveCard();
+        
+                        adaptiveCard.hostConfig = new AdaptiveCards.HostConfig({
+                            fontFamily: "Segoe UI, Helvetica Neue, sans-serif"
+                        });
+                        adaptiveCard.onExecuteAction = function(action) { alert("Ow!"); }
+        
+                        // For markdown support you need a third-party library
+                        // E.g., to use markdown-it, include in your HTML page:
+                        //      type="text/javascript" src="https://unpkg.com/markdown-it/dist/markdown-it.js">
+                        // And add this code to replace the default markdown handler:
+                        adaptiveCard.processMarkdown = function(text) { return markdownit().render(text); }
+        
+                        // Parse the card payload
+                        adaptiveCard.parse(card);
+        
+                        // Render the card to an HTML element:
+                        var renderedCard = adaptiveCard.render();
+                        sOutput+=renderedCard.outerHTML;
+                        break;
+                    case "application/vnd.microsoft.card.hero":
+                        var card=activity.attachments[0];
+                        var s = "# " + card.content.title + "\n" + 
+                            "## " + card.content.subtitle + "\n" + 
+                            card.content.text + "\n";
+                        sOutput+=markdownit().render(s);
+                        for(var f=0;f<card.content.buttons.length;f++){
+                            sOutput+='<input type=button value="' + card.content.buttons[f].title + '"/><br>';
+                        }
+                        break;
+                
+                    default:
+                        sOutput+=markdownit().render(activity.text);
+                        break;
+                }
             }
             else
                 sOutput+=markdownit().render(activity.text);
