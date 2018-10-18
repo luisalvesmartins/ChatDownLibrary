@@ -54,6 +54,12 @@ html, body {
     border:1px solid;
     overflow-y:auto;
 }
+#botWC2 {
+    position: relative;
+    background-color: white;
+    border:1px solid;
+    height:800px;
+}
 A { text-decoration: underline;cursor: pointer;}
 button { cursor:pointer}
 .menu {padding-bottom:5px;font:12px 'Segoe UI'}

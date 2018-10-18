@@ -6,10 +6,11 @@
 
     <link href="https://cdn.botframework.com/botframework-webchat/latest/botchat.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="offlinebotchat.js"></script>
     <script src="https://unpkg.com/adaptivecards/dist/adaptivecards.js" type="text/javascript" ></script>
     <script src="https://unpkg.com/markdown-it/dist/markdown-it.js" type="text/javascript"></script>
     <script src="./chatdownsource.js" type="text/javascript" ></script>
-    <script src="./script.js" type="text/javascript" ></script>
+    <script src="./scriptmonaco.js" type="text/javascript" ></script>
     <script src="./vs/loader.js"></script>
     <link href="./style.css" rel="stylesheet">
 </head>
@@ -40,9 +41,9 @@
                 <button onclick="send()">Add</button>
             </div>
         </div>
-        <div class="panel" style="width:300px;display:none">
+        <div class="panel" style="width:300px;display:none;overflow-y:auto;overflow-x:hidden">
             <div class=panelheader>Transcript</div>
-            <div style="overflow-y:auto;overflow-x:hidden">
+            <div>
                 <div id=result style="border:1px solid;white-space: pre;"></div>
             </div>
         </div>
@@ -54,12 +55,7 @@
                     <a onclick="MenuChatEmulator.SaveTranscript()">Save Transcript</a>
                 </div>
             </div>
-            <div class='largeChild' id='botWC'>
-                <div class="wc-app">
-                    <div class='wc-message-pane'>
-                        <div id=displayActivities></div>
-                    </div>
-                </div>
+            <div class='largeChild' id='botWC2'>
             </div>
         </div>
     </div>
@@ -99,6 +95,23 @@ require(['vs/editor/editor.main'], function() {
         render();
     });
 });
+
+var DirectLineEmulator={
+    emptyActivity:{
+        "activities": [],
+        "watermark": "0"
+    },
+    userActivity:function(activity){
+    //Every time the user sends an activity: 
+        console.log("USER ACTIVITY:")
+        console.log(activity);
+    },
+    getActivity:function(activity){
+        var a=this.nextActivity;
+        this.nextActivity={ "activities":[]};
+        return a;
+    }
+}
 </script>
 </body>
 </html>
