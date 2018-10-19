@@ -174,21 +174,44 @@ function render()
 
 var fileList=[];
 var historyAct=[];
-function renderContent(content){
+
+function renderContent(content)
+{
+$(".wc-message-group-content").html("");
+
+    fileList=[];
     var original=content;
     var pos=original.indexOf("Attachment=");
-    var xhrObj = new XMLHttpRequest();
     while (pos>0) {
         var pos2=original.substr(pos+11).indexOf(" ");
         var file=original.substr(pos+11,pos2);
-        // open and send a synchronous request
-        xhrObj.open('GET', file, false);
-        xhrObj.send('');
 
-        fileList.push({ file:file, content:xhrObj.responseText});
+        fileList.push({ file:file, content:null});
         pos=original.indexOf("Attachment=",pos+1);
     }
 
+    if (fileList.length>0)
+        loadImage(0);
+    else
+        renderContent2(content);
+}
+
+function loadImage(index){
+    $.get( fileList[index].file, function( data ) {
+        console.log(fileList[index].file)
+        fileList[index].content=data;
+        index++;
+        if(index < fileList.length) {
+            loadImage(index);
+        }
+        else
+        {
+            renderContent2(getChat());
+        }
+        });
+}
+
+function renderContent2(content){
     var chatDown=readContents(content)
     document.all("result").innerText= JSON.stringify(chatDown, undefined,2 );
     historyAct=[];
